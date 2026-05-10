@@ -1,15 +1,19 @@
-# Generated SVG (large, re-created from PDF via mutool)
+# Generated SVG (large; re-create with mutool, see README)
 sendas_page1.svg
 sendas_page2.svg
 
-# Generated image
+# Generated preview image
 sendas_map_p1.png
 
-# Old/interim map versions
+# Old interim files
 calpe_sendas_map.html
 calpe_sendas_R2_R4_R7_R8.gpx
 
-# Python cache
+# Python cache & calibration pickle
 __pycache__/
 *.pyc
 *.pkl
+
+# Editor / tooling
+.vscode/
+.claude/

@@ -29,12 +29,16 @@ import networkx as nx
 import urllib.request
 
 # ── file paths ────────────────────────────────────────────────────────────────
-PDF      = "plano_sendas_tradicionales_calp.pdf"
-SVG      = "sendas_page1.svg"
-GEOJSON  = "sendas_tradicionales_calp.geojson"
-GPX_OUT  = "sendas_tradicionales_calp.gpx"
-OSM_PATHS = "osm_paths.json"
-CALIB_PKL = "/tmp/calp_calib2.pkl"
+PDF       = "data/plano_sendas_tradicionales_calp.pdf"
+SVG       = "sendas_page1.svg"          # generated; excluded from git
+GEOJSON   = "data/sendas_tradicionales_calp.geojson"
+GPX_OUT   = "data/sendas_tradicionales_calp.gpx"
+TOUR_GPX  = "data/tour_grand_calp.gpx"
+OSM_PATHS = "data/osm_paths.json"
+CALIB_PKL = "/tmp/calp_calib2.pkl"     # cached calibration result
+LEAFLET_JS  = "map/leaflet.js"
+LEAFLET_CSS = "map/leaflet.css"
+MAP_HTML    = "map/sendas_calp_map.html"
 
 # ── known calibration (result of previous optimisation – skip re-running) ─────
 CALIB = {
@@ -887,7 +891,7 @@ if __name__ == '__main__':
     routes_gps['SV-05'] = fix_sv05_blue(routes_gps)
 
     # SV-01: OSM-snap to actual roads (needs broader OSM data)
-    osm_sv01_path = '/tmp/sv01_osm_full.json'
+    osm_sv01_path = '/tmp/sv01_osm_full.json'   # all highway types for routing
     if not os.path.exists(osm_sv01_path):
         print("Downloading OSM data for SV-01 snap ...")
         download_osm_all_highways((38.640, 0.010, 38.680, 0.075), osm_sv01_path)
@@ -917,18 +921,19 @@ if __name__ == '__main__':
         for i in range(len(tour)-1))
     print(f"Tour length: {total_m/1000:.1f} km")
 
-    write_tour_gpx(tour, with_elevation=True)
+    write_tour_gpx(tour, out=TOUR_GPX, with_elevation=True)
 
     # ── Step 8: HTML map ──────────────────────────────────────────────────────
     print("Building HTML map ...")
-    write_html_map(routes_gps, tour)
+    write_html_map(routes_gps, tour, out=MAP_HTML,
+                   leaflet_js=LEAFLET_JS, leaflet_css=LEAFLET_CSS)
 
     print("\nAll done.")
-    print(f"  {GEOJSON}               – 8 sendas as GeoJSON")
-    print(f"  {GPX_OUT}        – 8 sendas as GPX")
-    print(f"  tour_grand_calp.gpx          – Grand Tour with SRTM elevation")
-    print(f"  sendas_calp_map.html         – interactive Leaflet map")
+    print(f"  {GEOJSON:<45} – 8 sendas as GeoJSON")
+    print(f"  {GPX_OUT:<45} – 8 sendas as GPX")
+    print(f"  {TOUR_GPX:<45} – Grand Tour with SRTM elevation")
+    print(f"  {MAP_HTML:<45} – interactive Leaflet map")
     print()
     print("Serve the map locally with:")
     print("  python3 -m http.server 8765")
-    print("  open http://localhost:8765/sendas_calp_map.html")
+    print("  open http://localhost:8765/map/sendas_calp_map.html")
