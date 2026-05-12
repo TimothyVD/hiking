@@ -330,7 +330,8 @@ L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 // ── Layer registry ──
-const layers = {}; // id -> L.GeoJSON layer
+const layers = {};  // id -> colored L.GeoJSON
+const casings = {}; // id -> white outline L.GeoJSON
 let activeId = null;
 
 function svgIcon(color) {
@@ -338,24 +339,21 @@ function svgIcon(color) {
 }
 
 function setActive(id) {
-  // Deactivate previous
   if (activeId && layers[activeId]) {
-    const prev = ROUTES.find(r => r.id === activeId) || { color: '#1a1a1a' };
-    layers[activeId].setStyle({ weight: 3.5, opacity: 0.9 });
-    layers[activeId].bringToBack();
+    layers[activeId].setStyle({ weight: 5, opacity: 1 });
+    if (casings[activeId]) casings[activeId].setStyle({ weight: 9, opacity: 0.8 });
     document.querySelectorAll('.route-card, .grand-tour-card').forEach(el => el.classList.remove('active'));
   }
 
   activeId = id;
 
   if (id && layers[id]) {
-    layers[id].setStyle({ weight: 6, opacity: 1 });
+    if (casings[id]) { casings[id].setStyle({ weight: 12, opacity: 0.9 }); casings[id].bringToFront(); }
+    layers[id].setStyle({ weight: 8, opacity: 1 });
     layers[id].bringToFront();
 
-    // Fit bounds
     try { map.fitBounds(layers[id].getBounds().pad(0.15)); } catch(e) {}
 
-    // Highlight card
     const card = document.querySelector(`[data-id="${id}"]`);
     if (card) card.classList.add('active');
   }
@@ -368,14 +366,14 @@ SENDAS_GEOJSON.features.forEach(feature => {
   const route = ROUTES.find(r => r.id === id);
   if (!route) return;
 
+  // White casing drawn first (underneath)
+  const casing = L.geoJSON(feature, {
+    style: { color: '#ffffff', weight: 9, opacity: 0.8, lineJoin: 'round', lineCap: 'round' }
+  }).addTo(map);
+  casings[id] = casing;
+
   const layer = L.geoJSON(feature, {
-    style: {
-      color: route.color,
-      weight: 3.5,
-      opacity: 0.9,
-      lineJoin: 'round',
-      lineCap: 'round',
-    }
+    style: { color: route.color, weight: 5, opacity: 1, lineJoin: 'round', lineCap: 'round' }
   });
 
   layer.bindPopup(() => {
@@ -393,15 +391,15 @@ SENDAS_GEOJSON.features.forEach(feature => {
 
 // ── Grand Tour layer ──
 const tourFeature = TOUR_GEOJSON.features[0];
+
+const tourCasing = L.geoJSON(tourFeature, {
+  style: { color: '#ffffff', weight: 9, opacity: 0.8, lineJoin: 'round', lineCap: 'round' }
+}).addTo(map);
+tourCasing.bringToBack();
+casings['GRAND-TOUR'] = tourCasing;
+
 const tourLayer = L.geoJSON(tourFeature, {
-  style: {
-    color: '#1a1a1a',
-    weight: 3.5,
-    opacity: 0.85,
-    dashArray: '8 5',
-    lineJoin: 'round',
-    lineCap: 'round',
-  }
+  style: { color: '#1a1a1a', weight: 4.5, opacity: 0.9, dashArray: '9 6', lineJoin: 'round', lineCap: 'round' }
 });
 
 tourLayer.bindPopup(() => {
