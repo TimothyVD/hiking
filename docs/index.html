@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sendas Tradicionales de Calp</title>
   <link rel="stylesheet" href="leaflet.css"/>
+  <script data-goatcounter="https://sendas-calp.goatcounter.com/count"
+          async src="//gc.zgo.at/count.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -288,7 +290,8 @@
     </div>
 
     <div id="sidebar-footer">
-      <a class="btn-download-all" href="gpx/all-sendas-tradicionales.gpx" download>
+      <a class="btn-download-all" href="gpx/all-sendas-tradicionales.gpx" download
+         data-goatcounter-click="download-all-sendas" data-goatcounter-title="Download all sendas (combined GPX)">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Download all 8 routes (combined GPX)
       </a>
@@ -434,7 +437,8 @@ ROUTES.forEach(route => {
       <div class="route-name">${route.name}</div>
       <div class="route-meta">${route.subtitle} · ${route.km} km</div>
     </div>
-    <a class="btn-download" href="gpx/${route.file}" download title="Download GPX">
+    <a class="btn-download" href="gpx/${route.file}" download title="Download GPX"
+       data-goatcounter-click="download-${route.id.toLowerCase()}" data-goatcounter-title="Download ${route.id} – ${route.name}">
       ${svgIcon('currentColor')}GPX
     </a>`;
 
@@ -456,7 +460,8 @@ gtCard.innerHTML = `
   <div class="gt-desc">Links all major routes: Magenta ↙ → Roja → Olta → La Mola → Lima → Amarilla → Ermita</div>
   <div class="gt-bottom">
     <div></div>
-    <a class="btn-download-dark" href="gpx/grand-tour-de-calp.gpx" download>
+    <a class="btn-download-dark" href="gpx/grand-tour-de-calp.gpx" download
+       data-goatcounter-click="download-grand-tour" data-goatcounter-title="Download Grand Tour de Calp">
       ${svgIcon('#eee')}Download GPX
     </a>
   </div>`;
